@@ -20,4 +20,5 @@ export type updatetodo = {
 export type detetetodo = {
     id:string
     userid:string
+    done:boolean
 }

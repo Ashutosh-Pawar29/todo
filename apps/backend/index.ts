@@ -1,14 +1,15 @@
 import { prisma } from "@repo/db";
 import { type createtodo, type detetetodo, type signup, type updatetodo } from "commons";
 import bcrypt from "bcrypt";
+import cors from "cors";
 import express, { type NextFunction,type Request, type Response } from "express";
 import jwt from "jsonwebtoken";
-import type { DetailedPeerCertificate } from "tls";
 
-const app = express()
+const app = express();
+app.use(cors());
 app.use(express.json());
-const port= process.env.port
-const pass:string = process.env.JWTSECRET || ""
+const port = process.env.PORT || process.env.port || 3000;
+const pass:string = process.env.JWTSECRET || "secret";
 
 function authenticate(req:Request,res:Response,next:NextFunction){
     let token:string = req.headers.token as string 
@@ -102,7 +103,7 @@ app.delete('/todo',authenticate,async (req,res)=>{
 
 app.put('/MarkAsDone',authenticate,async (req,res)=>{
     const body:detetetodo = req.body
-    const todo = await prisma.todos.update({where:body,data:{done:true}})
+    const todo = await prisma.todos.update({where:{id:body.id,userid:body.userid},data:{done:body.done}})
     res.json({msg:"todo completed ",todo})
 })
 
